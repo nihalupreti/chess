@@ -1,19 +1,51 @@
 .chessboard {
-    display: grid;
-    grid-template-columns: repeat(8, 50px); 
-    grid-template-rows: repeat(8, 50px);
+  display: grid;
+  grid-template-columns: repeat(8, 50px);
+  grid-template-rows: repeat(8, 50px);
 }
 
 .board-square {
-    width: 50px; 
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 24px;
-    border: 2px solid #000; 
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  border: 2px solid #000;
+  position: relative;
+}
+
+.white {
+  fill: rgb(255, 255, 255);
+}
+
+.black {
+  fill: black;
+}
+
+.black-square {
+  background-color: brown;
+}
+
+.white-square {
+  background-color: rgb(186, 183, 183);
 }
 
 .piece {
-    color: #000;
+  position: relative;
+  z-index: 9;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.piece svg {
+  position: relative;
+  z-index: -9;
+}
+path {
+  position: relative;
+  z-index: -10;
 }
