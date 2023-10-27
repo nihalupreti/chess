@@ -103,3 +103,74 @@ class Rook {
     return capturingLogic;
   }
 }
+
+class Bishop {
+  isMoveValid(fromPosRow, fromPosCol, toPosRow, toPosCol) {
+    const rowDiff = Math.abs(toPosRow - fromPosRow);
+    const colDiff = Math.abs(toPosCol - fromPosCol);
+
+    return rowDiff === colDiff;
+  }
+
+  isPathClear(fromPosRow, fromPosCol, toPosRow, toPosCol) {
+    const rowIncrement = toPosRow > fromPosRow ? 1 : -1;
+    const colIncrement = toPosCol > fromPosCol ? 1 : -1;
+
+    let currentRow = fromPosRow + rowIncrement;
+    let currentCol = fromPosCol + colIncrement;
+
+    while (currentRow !== toPosRow && currentCol !== toPosCol) {
+      const squareElement = document.querySelector(
+        `.square-${currentRow}-${currentCol}`
+      );
+
+      if (squareElement && squareElement.hasChildNodes()) {
+        return false;
+      }
+
+      currentRow += rowIncrement;
+      currentCol += colIncrement;
+    }
+
+    return true;
+  }
+
+  move(fromPosRow, fromPosCol, toPosRow, toPosCol) {
+    const moveLogic =
+      this.isMoveValid(fromPosRow, fromPosCol, toPosRow, toPosCol) &&
+      this.isPathClear(fromPosRow, fromPosCol, toPosRow, toPosCol);
+
+    return moveLogic;
+  }
+
+  canCaptureSquare(squareElement) {
+    return document.querySelector(`.${squareElement}`).hasChildNodes();
+  }
+}
+
+class Queen {
+  constructor() {
+    this.bishopFeature = new Bishop();
+    this.rookFeature = new Rook();
+  }
+
+  queenMove(fromPosRow, fromPosCol, toPosRow, toPosCol) {
+    const moveLogic =
+      this.bishopFeature.move(fromPosRow, fromPosCol, toPosRow, toPosCol) ||
+      this.rookFeature.move(fromPosRow, fromPosCol, toPosRow, toPosCol);
+    return moveLogic;
+  }
+
+  queenCapturingLogic(fromPosRow, fromPosCol, toPosRow, toPosCol, toSquareId) {
+    const capturingLogic =
+      this.bishopFeature.canCaptureSquare(toSquareId) ||
+      this.rookFeature.pieceCapturingLogic(
+        fromPosRow,
+        fromPosCol,
+        toPosRow,
+        toPosCol,
+        toSquareId
+      );
+    return capturingLogic;
+  }
+}

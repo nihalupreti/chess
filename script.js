@@ -178,5 +178,28 @@ function isTheMoveValid(toSquare) {
       } else {
         return false;
       }
+    case "b":
+      const bishopObj = new Bishop();
+      //prettier-ignore
+      const isBishopMoveValid = bishopObj.move(fromPos[0], fromPos[1], toPos[0], toPos[1])
+      const isBishopCaptureValid = bishopObj.canCaptureSquare(toSquareId);
+      if (isBishopMoveValid || (isBishopMoveValid && isBishopCaptureValid)) {
+        return true;
+      }
+
+    case "q":
+      const queenObj = new Queen();
+      //prettier-ignore
+      const isQueenMoveValid = queenObj.queenMove(fromPos[0], fromPos[1], toPos[0], toPos[1])
+      const isQueenCaptureValid = queenObj.queenCapturingLogic(
+        fromPos[0],
+        fromPos[1],
+        toPos[0],
+        toPos[1],
+        toSquareId
+      );
+      if (isQueenMoveValid || isQueenCaptureValid) {
+        return true;
+      }
   }
 }
