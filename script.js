@@ -66,40 +66,12 @@ let fromChessCoordinate;
 function dragPiece(e) {
   fromSquareElement = e.target.parentElement;
   fromSquareId = getPositionClassName(fromSquareElement);
-  console.log(fromSquareId);
   fromChessCoordinate = e.target.parentElement.getAttribute("data-coordinate");
 }
 
 function dropPiece(e) {
   e.preventDefault();
 }
-
-function dragDrop(e) {
-  e.stopPropagation();
-  const correctPlayer =
-    fromSquareElement.firstChild.firstChild.classList.contains(playersTurn);
-  const opponentPlayer = playersTurn === "white" ? "black" : "white";
-  const takenByOpponentPlayer =
-    e.target.firstChild?.classList.contains(opponentPlayer);
-  const valid = isTheMoveValid(e.target);
-  if (correctPlayer) {
-    if (takenByOpponentPlayer && valid) {
-      e.target.parentNode.append(fromSquareElement.firstChild);
-      e.target.remove();
-      changePlayerTurn();
-      return;
-    }
-    if (valid) {
-      e.target.append(fromSquareElement.firstChild);
-      changePlayerTurn();
-      return;
-    }
-    if (takenByOpponentPlayer) {
-      console.log("not a valid move");
-    }
-  }
-}
-
 function getPositionClassName(elementName) {
   const classNamePattern = /^square-\d+-\d+$/;
   let foundClassName;
@@ -146,8 +118,33 @@ function changePlayerTurn() {
   }
 }
 
+function dragDrop(e) {
+  e.stopPropagation();
+  const correctPlayer =
+    fromSquareElement.firstChild.firstChild.classList.contains(playersTurn);
+  const opponentPlayer = playersTurn === "white" ? "black" : "white";
+  const takenByOpponentPlayer =
+    e.target.firstChild?.classList.contains(opponentPlayer);
+  const valid = isTheMoveValid(e.target);
+  if (correctPlayer) {
+    if (takenByOpponentPlayer && valid) {
+      e.target.parentNode.append(fromSquareElement.firstChild);
+      e.target.remove();
+      changePlayerTurn();
+      return;
+    }
+    if (valid) {
+      e.target.append(fromSquareElement.firstChild);
+      changePlayerTurn();
+      return;
+    }
+    if (takenByOpponentPlayer) {
+      console.log("not a valid move");
+    }
+  }
+}
+
 function isTheMoveValid(toSquare) {
-  console.log(`from square ${fromSquareId}`);
   const draggedPiece = fromSquareElement.firstChild.id;
   let toSquareId;
   if (!toSquare.hasChildNodes()) {
@@ -158,12 +155,28 @@ function isTheMoveValid(toSquare) {
   const position = /\d+/g;
   const fromPos = fromSquareId.match(position).map((i) => Number(i));
   const toPos = toSquareId.match(position).map((i) => Number(i));
-  console.log(`to square${toSquareId}`);
   switch (draggedPiece) {
     case "p":
       const pawnObj = new Pawn();
       //prettier-ignore
-      const isPawnMoveValid = pawnObj.pawnMovementLogic(fromPos[0], fromPos[1], toPos[0], toPos[1], toSquareId);
-      return isPawnMoveValid;
+      const isPawnMoveValid = pawnObj.pawnMovementLogic(fromPos[0], fromPos[1], toPos[0], toPos[1]);
+      //prettier-ignore
+      const isPawnCaptureValid = pawnObj.pawnCapturingLogic(fromPos[0], fromPos[1], toPos[0], toPos[1], toSquareId);
+      if (isPawnMoveValid || isPawnCaptureValid) {
+        return true;
+      } else {
+        return false;
+      }
+    case "r":
+      const rookObj = new Rook();
+      //prettier-ignore
+      const isRookMoveValid = rookObj.move(fromPos[0], fromPos[1], toPos[0], toPos[1])
+      //prettier-ignore
+      const isRookCaptureValid = rookObj.pieceCapturingLogic(fromPos[0], fromPos[1], toPos[0], toPos[1], toSquareId)
+      if (isRookMoveValid || isRookCaptureValid) {
+        return true;
+      } else {
+        return false;
+      }
   }
 }
